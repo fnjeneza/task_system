@@ -27,8 +27,18 @@ class notification_queue{
             m_ready.notify_one()
         }
 
+        void done()
+        {
+            {
+                std::unique_ptr<std::mutex> lock(m_mutex);
+                m_done = true
+            }
+            m_ready.notify_all();
+        }
+
     private:
         std::deque<function<void()> m_queue;
+        bool m_done;
         std::mutex m_mutex;
         std::condition_variable m_ready;
 };
