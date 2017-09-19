@@ -6,15 +6,24 @@
 
 class notification_queue{
     public:
-        void pop(std::function<void()> & f)
+        bool pop(std::function<void()> & f)
         {
             std::unique_lock<std::mutex> lock(m_mutex);
-            while(m_queue.empty())
+
+            while(m_queue.empty() && !m_done)
             {
                 m_ready.wait(lock);
             }
+
+            if(m_queue.empty())
+            {
+                return false;
+            }
+
             f = std::move(m_queue.front());
             m_queue.pop_front();
+
+            return true;
         }
 
         template<typename F>
@@ -38,7 +47,7 @@ class notification_queue{
 
     private:
         std::deque<function<void()> m_queue;
-        bool m_done;
+        bool m_done{false};
         std::mutex m_mutex;
         std::condition_variable m_ready;
 };
