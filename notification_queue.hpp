@@ -3,6 +3,7 @@
 #include <functional>
 #include <deque>
 #include <mutex>
+#include <condition_variable>
 
 class notification_queue{
     public:
@@ -33,20 +34,20 @@ class notification_queue{
             std::unique_lock<std::mutex> lock(m_mutex);
             m_queue.emplace_back(std::forward<F>(f));
             }
-            m_ready.notify_one()
+            m_ready.notify_one();
         }
 
         void done()
         {
             {
-                std::unique_ptr<std::mutex> lock(m_mutex);
-                m_done = true
+                std::unique_lock<std::mutex> lock(m_mutex);
+                m_done = true;
             }
             m_ready.notify_all();
         }
 
     private:
-        std::deque<function<void()> m_queue;
+        std::deque<std::function<void()>> m_queue;
         bool m_done{false};
         std::mutex m_mutex;
         std::condition_variable m_ready;

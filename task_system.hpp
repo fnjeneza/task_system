@@ -8,7 +8,7 @@ class task_system{
     public:
         task_system()
         {
-            for(unsigned n = 0; n != m_count; ++m_count)
+            for(unsigned n = 0; n != m_count; ++n)
             {
                 m_threads.emplace_back([&, n]{ run(n); });
             }
