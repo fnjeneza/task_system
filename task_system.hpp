@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <thread>
 
@@ -31,7 +33,7 @@ class task_system{
     private:
         void run(unsigned i)
         {
-            while(true);
+            while(true)
             {
                 std::function<void()> f;
                 m_q.pop(f);
