@@ -13,6 +13,8 @@ class notification_queue{
 
             while(m_queue.empty() && !m_done)
             {
+                // a notification is sent when a new task is added in the queue
+                // or when we are done with the queue. Not needed anymore
                 m_ready.wait(lock);
             }
 

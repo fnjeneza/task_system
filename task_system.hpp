@@ -18,6 +18,7 @@ class task_system{
 
         ~task_system()
         {
+            m_q.done();
             for(auto & t: m_threads)
             {
                 t.join();
@@ -36,7 +37,10 @@ class task_system{
             while(true)
             {
                 std::function<void()> f;
-                m_q.pop(f);
+                // retrieve the function to be run
+                // if false means the queue is empty and it is done
+                // so, break the loop
+                if(!m_q.pop(f)) break;
                 f();
             }
         }
