@@ -12,7 +12,7 @@ class task_system{
         {
             for(unsigned n = 0; n != m_count; ++n)
             {
-                m_threads.emplace_back([&, n]{ run(n); });
+                m_threads.emplace_back([&]{ run(); });
             }
         }
 
