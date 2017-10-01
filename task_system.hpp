@@ -31,14 +31,8 @@ class task_system{
             m_q.push(std::forward<F> (f));
         }
 
-        template<typename F, typename... Args>
-        void async(F&& f, Args&&... args)
-        {
-            m_q.push([=](){ f(args...); });
-        }
-
     private:
-        void run(unsigned i)
+        void run()
         {
             while(true)
             {
