@@ -51,7 +51,7 @@ class task_system{
               std::function<void()> f;
               for (unsigned n = 0; n != m_count; ++n)
               {
-                  if (!m_qs[n % m_count].try_pop(f))
+                  if (m_qs[(i + n) % m_count].try_pop(f))
                   {
                       break;
                   }
