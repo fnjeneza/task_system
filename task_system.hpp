@@ -33,6 +33,13 @@ class task_system{
         void async(F&& f)
         {
             auto i = m_index++;
+            for (unsigned n = 0; n != m_count * 48; ++n)
+            {
+                if (m_qs[(i + n) % m_count].try_push(std::forward<F>(f)))
+                {
+                    return;
+                }
+            }
             m_qs[i % m_count].push(std::forward<F>(f));
         }
 
@@ -42,13 +49,19 @@ class task_system{
           while (true)
           {
               std::function<void()> f;
-              // retrieve the function to be run
-              // if false means the queue is empty and it is done
-              // so, break the loop
-              if (!m_qs[i].pop(f))
+              for (unsigned n = 0; n != m_count; ++n)
+              {
+                  if (!m_qs[n % m_count].try_pop(f))
+                  {
+                      break;
+                  }
+              }
+
+              if (!f && !m_qs[i].pop(f))
               {
                   break;
               }
+
               f();
           }
         }
